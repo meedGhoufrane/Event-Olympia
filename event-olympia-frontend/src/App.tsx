@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { MantineProvider, createTheme, Container, Title, Text, Button, Group, Stack, rem } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MainLayout } from './layouts/MainLayout';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { HomePage } from './pages/HomePage';
 import '@mantine/core/styles.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AllEventsPage } from './pages/AllEventsPage';
+import { Dashboard } from './pages/dashbaord/Dashboard';
+import { Profile } from './pages/Profile';
 
 const queryClient = new QueryClient();
 
@@ -30,80 +34,6 @@ const theme = createTheme({
   },
 });
 
-function HomePage() {
-  return (
-    <Container size="lg" style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-      <Stack align="center" spacing={rem(50)} style={{ width: '100%' }}>
-        <div style={{ textAlign: 'center', maxWidth: rem(800), width: '100%' }}>
-          <Title
-            order={1}
-            size={rem(60)}
-            fw={800}
-            lh={1.1}
-            mb={rem(30)}
-            gradient={{ from: 'blue', to: 'cyan', deg: 45 }}
-            variant="gradient"
-          >
-            Your Ultimate Event Management Platform
-          </Title>
-          <Text size="xl" c="dimmed" maw={rem(600)} mx="auto" mb={rem(40)}>
-            Create, manage, and discover amazing events. Join our community of event organizers and attendees.
-          </Text>
-          <Group justify="center">
-            <Button
-              size="xl"
-              radius="md"
-              variant="gradient"
-              gradient={{ from: 'blue', to: 'cyan' }}
-            >
-              Get Started
-            </Button>
-            <Button
-              size="xl"
-              radius="md"
-              variant="outline"
-              color="blue"
-            >
-              Learn More
-            </Button>
-          </Group>
-        </div>
-
-        <Container size="lg" style={{ width: '100%' }}>
-          <Group grow align="stretch">
-            {[
-              {
-                title: 'Create Events',
-                description: 'Easily create and manage your events with our intuitive tools.',
-              },
-              {
-                title: 'Sell Tickets',
-                description: 'Set up ticket sales and track your event revenue effortlessly.',
-              },
-              {
-                title: 'Engage Community',
-                description: 'Connect with attendees and build your event community.',
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                style={{
-                  padding: rem(24),
-                  borderRadius: 'var(--mantine-radius-md)',
-                  backgroundColor: 'var(--mantine-color-blue-0)',
-                }}
-              >
-                <Title order={3} mb={rem(12)}>{feature.title}</Title>
-                <Text c="dimmed">{feature.description}</Text>
-              </div>
-            ))}
-          </Group>
-        </Container>
-      </Stack>
-    </Container>
-  );
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -113,9 +43,12 @@ function App() {
             <Routes>
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<HomePage />} />
+                <Route path="events" element={<AllEventsPage />} />
                 <Route path="login" element={<ProtectedRoute type="guest"><Login /></ProtectedRoute>} />
                 <Route path="register" element={<ProtectedRoute type="guest"><Register /></ProtectedRoute>} />
+                <Route path="profile" element={<ProtectedRoute type="auth"><Profile /></ProtectedRoute>} />
               </Route>
+                <Route path="dashboard" element={<ProtectedRoute type="auth"><Dashboard /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

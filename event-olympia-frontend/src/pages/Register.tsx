@@ -12,6 +12,7 @@ export function Register() {
             password: '',
             firstName: '',
             lastName: '',
+            role: 'user', // Set default role here
         },
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),

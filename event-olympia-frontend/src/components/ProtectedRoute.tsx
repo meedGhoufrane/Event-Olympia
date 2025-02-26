@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, type }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userRole } = useAuth(); 
 
   if (type === 'auth' && !isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -15,6 +15,14 @@ export function ProtectedRoute({ children, type }: ProtectedRouteProps) {
 
   if (type === 'guest' && isAuthenticated) {
     return <Navigate to="/" replace />;
+  }
+
+  if (isAuthenticated) {
+    if (userRole === 'admin') {
+      return <Navigate to="/dashboard" replace />; 
+    } else if (userRole === 'user') {
+      return <Navigate to="/" replace />; 
+    }
   }
 
   return <>{children}</>;

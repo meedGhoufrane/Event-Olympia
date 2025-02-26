@@ -1,3 +1,4 @@
+// event_olympia_backend/src/modules/users/entities/user.entity.ts
 import { Schema, Document } from 'mongoose';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -20,6 +21,9 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ default: 'user' })
+  role: string;
 }
 
 export interface IUser extends Document {
@@ -36,4 +40,5 @@ export const UserSchema = new Schema({
   firstName: { type: String, required: false },
   lastName: { type: String, required: false },
   isActive: { type: Boolean, default: true },
+  role: { type: String, default: 'user' }, 
 });

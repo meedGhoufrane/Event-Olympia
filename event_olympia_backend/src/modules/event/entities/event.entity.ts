@@ -18,6 +18,12 @@ export class Event extends Document {
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop({ required: true })
+  image: string;
+
+  @Prop({ required: true })
+  location: string;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

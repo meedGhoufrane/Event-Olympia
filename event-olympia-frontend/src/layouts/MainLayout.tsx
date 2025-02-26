@@ -1,30 +1,36 @@
-import { AppShell, Container, rem } from '@mantine/core';
-import { Outlet } from 'react-router-dom';
+import { AppShell, rem } from '@mantine/core';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 
-export function MainLayout() {
-    return (
-        <AppShell
-            header={{ height: rem(60) }}
-            padding="md"
-            styles={{
-                main: {
-                    background: 'transparent',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: '100vh',
-                },
-            }}
-        >
+export function MainLayout({ toggleTheme, theme }) {
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-            <AppShell.Header>
-                <Header />
-            </AppShell.Header>
-            <AppShell.Main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Container size="md" py="xl" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Outlet />
-                </Container>
-            </AppShell.Main>
-        </AppShell>
-    );
+  return (
+    <AppShell
+      header={{ height: rem(0) }}
+      padding={0}
+      styles={{
+        main: {
+          background: 'transparent',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          paddingTop: 0, // Remove top padding to allow hero section to go behind header
+          width: '100%',
+        },
+      }}
+    >
+      {!isAuthPage && (
+        <AppShell.Header>
+          <Header toggleTheme={toggleTheme} theme={theme} />
+        </AppShell.Header>
+      )}
+      <AppShell.Main>
+        <Outlet />
+        <Footer />
+      </AppShell.Main>
+    </AppShell>
+  );
 }

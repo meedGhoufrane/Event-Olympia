@@ -30,10 +30,19 @@ export function Login() {
             }
         },
         onSuccess: (data) => {
+            console.log("Login response:", data);
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('userRole', data.role);
             setIsAuthenticated(true);
-            navigate('/');
-        },
+            
+            if (data.role === 'admin') {
+                console.log("About to navigate to dashboard");
+                // Force navigation with window.location instead of react-router
+                window.location.href = '/dashboard';
+            } else {
+                navigate('/');
+            }
+        }
     });
 
     return (
@@ -47,8 +56,8 @@ export function Login() {
                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(10px)',
                 }}
-
-            >                <Title ta="center" order={2}>Welcome back!</Title>
+            >
+                <Title ta="center" order={2}>Welcome back!</Title>
                 <Text c="dimmed" size="sm" ta="center" mt={5}>
                     Don't have an account?{' '}
                     <Anchor component={Link} to="/register" size="sm">

@@ -1,37 +1,57 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+// In AuthContext.tsx
+import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  userRole: string | null;
   setIsAuthenticated: (value: boolean) => void;
+  setUserRole: (role: string | null) => void;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  userRole: null,
+  setIsAuthenticated: () => {},
+  setUserRole: () => {},
+  logout: () => {},
+});
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check if token exists in localStorage
     const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
+    const role = localStorage.getItem('userRole');
+    
+    if (token) {
+      setIsAuthenticated(true);
+      setUserRole(role);
+    }
   }, []);
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     setIsAuthenticated(false);
+    setUserRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        userRole,
+        setIsAuthenticated,
+        setUserRole,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
+
+export const useAuth = () => useContext(AuthContext);

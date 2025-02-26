@@ -13,7 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'defaultSecret',
-      signOptions: { expiresIn: '1d' }, // Changed from 60s to 1 day for testing
+      signOptions: { expiresIn: '1d' }, 
     }),
   ],
   controllers: [AuthController],

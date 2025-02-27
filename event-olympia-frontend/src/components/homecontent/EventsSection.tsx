@@ -24,7 +24,7 @@ export function EventsSection() {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await api.get('/event'); // Fetch events from the backend
+        const response = await api.get('/event?limit=3'); 
         setEvents(response.data);
       } catch (error) {
         console.error('Error fetching events:', error);

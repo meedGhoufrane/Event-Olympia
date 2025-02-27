@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './dto/create-event.dto';
 import { Event } from './entities/event.entity';
@@ -13,8 +13,8 @@ export class EventController {
   }
 
   @Get()
-  findAll(): Promise<Event[]> {
-    return this.eventService.findAll();
+  findAll(@Query('limit') limit: string): Promise<Event[]> {
+    return this.eventService.findAll(Number(limit));
   }
 
   @Get(':id')

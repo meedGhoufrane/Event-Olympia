@@ -8,15 +8,19 @@ import { Event } from './entities/event.entity';
 export class EventService {
   constructor(
     @InjectModel(Event.name) private eventModel: Model<Event>
-  ) {}
+  ) { }
 
   async create(createEventDto: CreateEventDto): Promise<Event> {
     const createdEvent = new this.eventModel(createEventDto);
     return createdEvent.save();
   }
 
-  async findAll(): Promise<Event[]> {
-    return this.eventModel.find().populate('createdBy').exec();
+  async findAll(limit?: number): Promise<Event[]> {
+    const query = this.eventModel.find().populate('createdBy');
+    if (limit) {
+      query.limit(limit);
+    }
+    return query.exec();
   }
 
   async findOne(id: string): Promise<Event> {
@@ -32,7 +36,7 @@ export class EventService {
       .findByIdAndUpdate(id, updateEventDto, { new: true })
       .populate('createdBy')
       .exec();
-    
+
     if (!updatedEvent) {
       throw new NotFoundException(`Event with ID ${id} not found`);
     }

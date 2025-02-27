@@ -9,7 +9,6 @@ import '@mantine/core/styles.css';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AllEventsPage } from './pages/AllEventsPage';
-import { Dashboard } from './pages/dashbaord/Dashboard';
 import { Profile } from './pages/Profile';
 
 const queryClient = new QueryClient();
@@ -48,7 +47,6 @@ function App() {
                 <Route path="register" element={<ProtectedRoute type="guest"><Register /></ProtectedRoute>} />
                 <Route path="profile" element={<ProtectedRoute type="auth"><Profile /></ProtectedRoute>} />
               </Route>
-                <Route path="dashboard" element={<ProtectedRoute type="auth"><Dashboard /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

@@ -9,20 +9,24 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 export class TicketService {
   constructor(
     @InjectModel(Ticket.name) private ticketModel: Model<Ticket>
-  ) {}
+  ) { }
 
   async create(createTicketDto: CreateTicketDto): Promise<Ticket> {
-    const ticket = new this.ticketModel(createTicketDto);
+    const ticket = new this.ticketModel({
+      event: createTicketDto.eventId,
+      user: createTicketDto.userId,
+      price: createTicketDto.price,
+      status: createTicketDto.status,
+    });
     return ticket.save();
   }
 
   async findAll(): Promise<Ticket[]> {
     return this.ticketModel.find()
-      .populate('event')
+      .populate('event') // Ensure this is included
       .populate('user')
       .exec();
   }
-
   async findOne(id: string): Promise<Ticket> {
     const ticket = await this.ticketModel.findById(id)
       .populate('event')

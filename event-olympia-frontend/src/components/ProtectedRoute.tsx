@@ -1,29 +1,29 @@
-import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  type: 'auth' | 'guest';
+  type: 'auth' | 'guest' | 'admin';
 }
 
 export function ProtectedRoute({ children, type }: ProtectedRouteProps) {
-  const { isAuthenticated, userRole } = useAuth(); 
 
-  if (type === 'auth' && !isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  // const userRole = localStorage.getItem('userRole');
 
-  if (type === 'guest' && isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  // const { isAuthenticated } = useAuth();
+  // console.log("role - isauth", userRole, isAuthenticated);
 
-  if (isAuthenticated) {
-    if (userRole === 'admin') {
-      return <Navigate to="/dashboard" replace />; 
-    } else if (userRole === 'user') {
-      return <Navigate to="/" replace />; 
-    }
-  }
+  // // if (type === 'guest' && isAuthenticated) {
+  // //   return <Navigate to="/" replace />;
+  // // }
+
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/login" replace />;
+  // }
+
+  // if (type === 'admin' && isAuthenticated && userRole === 'admin') {
+  //   return <Navigate to="/admin/dashboard" replace />;
+  // }
 
   return <>{children}</>;
 }

@@ -12,9 +12,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userRole: null,
-  setIsAuthenticated: () => {},
-  setUserRole: () => {},
-  logout: () => {},
+  setIsAuthenticated: () => { },
+  setUserRole: () => { },
+  logout: () => { },
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -22,16 +22,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if token exists in localStorage
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('userRole');
-    
     if (token) {
       setIsAuthenticated(true);
-      setUserRole(role);
+      setUserRole(role); // Ensure this is called
     }
-  }, []);
-
+  }, []); // Empty dependency array to run only once on mount
+  
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');

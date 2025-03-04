@@ -94,7 +94,7 @@ export function HeroSection() {
           <Group justify="center" mt={rem(20)}>
             <Button
               component={Link}
-              to="/register"
+              to="/Tickets"
               size="xl"
               radius="xl"
               variant="gradient"
@@ -107,7 +107,7 @@ export function HeroSection() {
                 boxShadow: '0 4px 14px rgba(0, 118, 255, 0.4)',
               }}
             >
-              Register Now
+              Buy Tickets Now
             </Button>
             
             <Button

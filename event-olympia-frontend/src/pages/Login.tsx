@@ -34,11 +34,11 @@ export function Login() {
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('userRole', data.role);
             setIsAuthenticated(true);
-            
-            if (data.role === 'admin') {
+            console.log(data.role, "hi");
+
+            if (data.role == 'admin') {
                 console.log("About to navigate to dashboard");
-                // Force navigation with window.location instead of react-router
-                window.location.href = '/dashboard';
+                navigate('/admin/dashboard');
             } else {
                 navigate('/');
             }

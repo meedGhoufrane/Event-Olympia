@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto, UpdateTicketDto } from './dto/create-ticket.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('tickets')
-@UseGuards(JwtAuthGuard)
 export class TicketController {
-  constructor(private readonly ticketService: TicketService) {}
+  constructor(private readonly ticketService: TicketService) { }
 
   @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
+  create(@Body() createTicketDto: CreateTicketDto, @Req() request: any) {
+    console.log('Request Headers:', request.headers);
+    console.log('Creating ticket with data:', createTicketDto);
+
     return this.ticketService.create(createTicketDto);
   }
 

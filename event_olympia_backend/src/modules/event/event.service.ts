@@ -31,7 +31,18 @@ export class EventService {
     return event;
   }
 
+  // In your event.service.ts
   async update(id: string, updateEventDto: UpdateEventDto): Promise<Event> {
+    // If we're not updating the image, don't override it
+    if (!updateEventDto.image) {
+      const event = await this.eventModel.findById(id).exec();
+      if (!event) {
+        throw new NotFoundException(`Event with ID ${id} not found`);
+      }
+      // Remove image field if it's not being updated
+      delete updateEventDto.image;
+    }
+
     const updatedEvent = await this.eventModel
       .findByIdAndUpdate(id, updateEventDto, { new: true })
       .populate('createdBy')
@@ -40,6 +51,7 @@ export class EventService {
     if (!updatedEvent) {
       throw new NotFoundException(`Event with ID ${id} not found`);
     }
+
     return updatedEvent;
   }
 
@@ -48,5 +60,17 @@ export class EventService {
     if (!result) {
       throw new NotFoundException(`Event with ID ${id} not found`);
     }
+  }
+
+  async getStatistics() {
+    const totalEvents = await this.findAll(); // Assuming this returns all events
+    const activeEvents = totalEvents.filter(event => event.status === 'active').length;
+    const completedEvents = totalEvents.filter(event => event.status === 'completed').length;
+
+    return {
+      totalEvents: totalEvents.length,
+      activeEvents,
+      completedEvents,
+    };
   }
 }

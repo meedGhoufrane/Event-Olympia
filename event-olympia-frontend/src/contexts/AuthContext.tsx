@@ -1,40 +1,73 @@
-// In AuthContext.tsx
-import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  userRole: string | null;
-  setIsAuthenticated: (value: boolean) => void;
-  setUserRole: (role: string | null) => void;
-  logout: () => void;
+interface User {
+  _id: string;
+  email: string;
+  name?: string;
+  role?: string;
+  [key: string]: any; 
 }
 
-const AuthContext = createContext<AuthContextType>({
+type AuthContextType = {
+  isAuthenticated: boolean;
+  userRole: string | null;
+  user: User | null;
+  setIsAuthenticated: (value: boolean) => void;
+  setUserRole: (role: string | null) => void;
+  setUser: (user: User | null) => void;
+  logout: () => void;
+};
+
+export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   userRole: null,
-  setIsAuthenticated: () => { },
-  setUserRole: () => { },
-  logout: () => { },
+  user: null,
+  setIsAuthenticated: () => {},
+  setUserRole: () => {},
+  setUser: () => {},
+  logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('userRole');
+    const userData = localStorage.getItem('user');
+    
     if (token) {
       setIsAuthenticated(true);
-      setUserRole(role); // Ensure this is called
+      setUserRole(role);
+      
+      if (userData && userData !== "undefined") {
+        try {
+          const parsedUser = JSON.parse(userData);
+          if (parsedUser && typeof parsedUser === 'object') {
+            setUser(parsedUser);
+          } else {
+            console.error('User data is not a valid object');
+            localStorage.removeItem('user');
+          }
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
+          localStorage.removeItem('user');
+        }
+      } else {
+        localStorage.removeItem('user');
+      }
     }
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
   
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
     setUserRole(null);
+    setUser(null);
   };
 
   return (
@@ -42,8 +75,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isAuthenticated,
         userRole,
+        user,
         setIsAuthenticated,
         setUserRole,
+        setUser,
         logout,
       }}
     >

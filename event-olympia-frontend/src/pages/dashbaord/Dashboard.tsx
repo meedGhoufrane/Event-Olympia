@@ -1,5 +1,4 @@
-// src/pages/dashboard/Dashboard.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Text,
   Title,
@@ -14,7 +13,7 @@ import {
   Group,
   useMantineTheme,
   Box,
-  AppShell,
+  Paper,
 } from '@mantine/core';
 import {
   IconCalendarEvent,
@@ -26,10 +25,7 @@ import {
   IconEye,
   IconEdit,
   IconTrash,
-  IconDashboard,
-  IconUserCircle,
-  IconSettings,
-  IconLogout,
+  IconPlus,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -47,33 +43,28 @@ const statsData = [
   { title: 'Pending Requests', value: '9', diff: 8.1, icon: IconTicket, color: 'orange' },
 ];
 
-const navItems = [
-  { icon: IconDashboard, label: 'Dashboard', path: '/admin/dashboard' },
-  { icon: IconUsers, label: 'Manage Users', path: '/admin/users' },
-  { icon: IconCalendarEvent, label: 'Manage Events', path: '/admin/events' },
-  { icon: IconTicket, label: 'Manage Tickets', path: '/admin/tickets' },
-  { icon: IconChartPie, label: 'Statistics', path: '/admin/statistics' },
-  { icon: IconUserCircle, label: 'Profile', path: '/profile' },
-  { icon: IconSettings, label: 'Settings', path: '/settings' },
-  { icon: IconLogout, label: 'Logout', path: '/logout' },
-];
-
 function Stat({ title, value, diff, icon: Icon, color }) {
   const theme = useMantineTheme();
+  const diffColor = diff > 0 ? theme.colors.teal[6] : theme.colors.red[6];
+
   return (
-    <Card p="md" style={{ backgroundColor: theme.colors[color][0] }}>
-      <Group position="apart">
-        <Text size="sm" c="dimmed">
+    <Card shadow="sm" p="lg" radius="md" withBorder>
+      <Group position="apart" mb="xs">
+        <Text size="sm" fw={500} c="dimmed">
           {title}
         </Text>
-        <Icon size={24} color={theme.colors[color][6]} />
+        <Icon size={28} stroke={1.5} color={theme.colors[color][6]} />
       </Group>
-      <Text size="xl" fw={700} mt={theme.spacing.sm}>
+      <Text size="2xl" fw={700}>
         {value}
       </Text>
-      <Group align="center">
-        <Text size="sm" c={diff > 0 ? 'teal' : 'red'} fw={500}>
-          {diff > 0 ? <IconArrowUpRight size={16} /> : <IconArrowDownRight size={16} />}
+      <Group spacing={5} mt="md">
+        {diff > 0 ? (
+          <IconArrowUpRight size={16} color={diffColor} />
+        ) : (
+          <IconArrowDownRight size={16} color={diffColor} />
+        )}
+        <Text size="sm" c={diffColor} fw={500}>
           {Math.abs(diff)}%
         </Text>
         <Text size="xs" c="dimmed">
@@ -87,102 +78,99 @@ function Stat({ title, value, diff, icon: Icon, color }) {
 export function Dashboard() {
   const navigate = useNavigate();
   const theme = useMantineTheme();
-  const [activeItem, setActiveItem] = useState('/admin/dashboard');
-
-  const handleNavClick = (path) => {
-    setActiveItem(path);
-    navigate(path);
-  };
 
   return (
-    <AppShell
-      padding="md"
-      navbar={{
-        width: 250,
-        breakpoint: 'sm'
-      }}
-    >
-      {/* <AppShell.Navbar p="md">
-        <Stack spacing="xs">
-          <Title order={3} mb="md">Event Management</Title>
-
-          {navItems.map((item) => (
-            <CustomNavbar
-              key={item.label}
-              icon={item.icon}
-              label={item.label}
-              active={activeItem === item.path}
-              onClick={() => handleNavClick(item.path)}
-            />
-          ))}
-
-          <Box mt="auto" pt="xl">
-            <Text size="xs" c="dimmed" ta="center">
-              © 2025 Event Management System
-            </Text>
+    <Box p="md">
+      <Stack gap="xl">
+        <Group position="apart" align="flex-end">
+          <Box>
+            <Text c="dimmed" size="sm">Welcome back</Text>
+            <Title order={2} mb="xs">Dashboard Overview</Title>
           </Box>
-        </Stack>
-      </AppShell.Navbar> */}
+        
+        </Group>
 
-      <AppShell.Main>
-        <Stack gap="md">
-          <Title order={1}>Dashboard</Title>
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
-            {statsData.map((stat) => (
-              <Stat key={stat.title} {...stat} />
-            ))}
-          </SimpleGrid>
-          <Group justify="space-between">
-            <Title order={2}>Events</Title>
-            <Button variant="outline" onClick={() => navigate('/admin/events')}>
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
+          {statsData.map((stat) => (
+            <Stat key={stat.title} {...stat} />
+          ))}
+        </SimpleGrid>
+
+        <Paper p="md" shadow="sm" radius="md" withBorder>
+          <Group position="apart" mb="lg">
+            <Title order={3}>Upcoming Events</Title>
+            <Button 
+              variant="light" 
+              radius="md" 
+              onClick={() => navigate('/admin/events')}
+            >
               View All Events
             </Button>
           </Group>
+
           <Box style={{ overflowX: 'auto' }}>
-            <Table>
+            <Table striped highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Event</Table.Th>
+                  <Table.Th>Event Name</Table.Th>
                   <Table.Th>Date</Table.Th>
                   <Table.Th>Attendees</Table.Th>
                   <Table.Th>Status</Table.Th>
-                  <Table.Th>Progress</Table.Th>
-                  <Table.Th>Actions</Table.Th>
+                  <Table.Th>Completion</Table.Th>
+                  <Table.Th style={{ textAlign: 'center' }}>Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
                 {mockEvents.map((event) => (
                   <Table.Tr key={event.id}>
-                    <Table.Td>{event.title}</Table.Td>
+                    <Table.Td fw={500}>{event.title}</Table.Td>
                     <Table.Td>{event.date}</Table.Td>
                     <Table.Td>{event.attendees.toLocaleString()}</Table.Td>
                     <Table.Td>
-                      <Badge color={event.status === 'active' ? 'green' : event.status === 'planning' ? 'blue' : 'gray'}>
+                      <Badge 
+                        variant="light"
+                        color={
+                          event.status === 'active' ? 'green' : 
+                          event.status === 'planning' ? 'blue' : 'gray'
+                        }
+                      >
                         {event.status}
                       </Badge>
                     </Table.Td>
-                    <Table.Td>
-                      <Progress
-                        value={event.progress}
-                        color={event.progress >= 90 ? 'green' : event.progress >= 50 ? 'blue' : 'orange'}
-                        size="sm"
-                        radius="xl"
-                        style={{ width: '80%' }}
-                      />
-                      <Text size="sm" ta="center">
-                        {event.progress}%
-                      </Text>
+                    <Table.Td style={{ width: '15%' }}>
+                      <Stack gap={5}>
+                        <Progress
+                          value={event.progress}
+                          color={
+                            event.progress >= 90 ? 'green' : 
+                            event.progress >= 50 ? 'blue' : 'orange'
+                          }
+                          size="sm"
+                          radius="xl"
+                        />
+                        <Text size="xs" ta="right" c="dimmed">
+                          {event.progress}%
+                        </Text>
+                      </Stack>
                     </Table.Td>
                     <Table.Td>
-                      <Group gap="sm">
-                        <ActionIcon onClick={() => navigate(`/admin/events/${event.id}`)}>
-                          <IconEye size={16} />
+                      <Group spacing={5} position="center">
+                        <ActionIcon 
+                          variant="subtle" 
+                          color="blue" 
+                          onClick={() => navigate(`/admin/events/${event.id}`)}
+                        >
+                          <IconEye size={18} />
                         </ActionIcon>
-                        <ActionIcon onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
-                          <IconEdit size={16} />
+                        <ActionIcon 
+                          variant="subtle" 
+                          color="violet" 
+                          onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                        >
+                          <IconEdit size={18} />
                         </ActionIcon>
-                        <ActionIcon>
-                          <IconTrash size={16} />
+                        <ActionIcon variant="subtle" color="red">
+                          <IconTrash size={18} />
                         </ActionIcon>
                       </Group>
                     </Table.Td>
@@ -191,8 +179,8 @@ export function Dashboard() {
               </Table.Tbody>
             </Table>
           </Box>
-        </Stack>
-      </AppShell.Main>
-    </AppShell>
+        </Paper>
+      </Stack>
+    </Box>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { UnstyledButton, Group, Text, useMantineTheme } from '@mantine/core';
 import { TablerIconsProps } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
 
 interface CustomNavbarProps {
   icon: React.FC<TablerIconsProps>;

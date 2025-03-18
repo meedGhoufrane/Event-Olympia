@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export function Login() {
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useAuth();
+    const { setIsAuthenticated, setUser, setUserRole } = useAuth();
 
     const form = useForm({
         initialValues: {
@@ -26,23 +26,58 @@ export function Login() {
                 const response = await api.post('/auth/login', values);
                 return response.data;
             } catch (error: any) {
+                console.error("API Error:", error.response?.data || error);
                 throw new Error(error.response?.data?.message || 'Login failed');
             }
         },
         onSuccess: (data) => {
             console.log("Login response:", data);
-            localStorage.setItem('token', data.access_token);
-            localStorage.setItem('userRole', data.role);
-            setIsAuthenticated(true);
-            console.log(data.role, "hi");
 
-            if (data.role == 'admin') {
-                console.log("About to navigate to dashboard");
+            // Validate response data
+            if (!data.access_token) {
+                throw new Error('No access token provided');
+            }
+
+            // Extract user data from the response
+            const { access_token, role, user_id } = data;
+
+            // Create a user object
+            const user = {
+                _id: user_id, // Use the user_id from the backend
+                email: form.values.email,
+                name: form.values.email.split('@')[0] || 'User',
+                role: role || 'user',
+            };
+
+            console.log("Processed user data:", user);
+
+            // Store token and user data in localStorage
+            localStorage.setItem('token', access_token);
+            localStorage.setItem('user_id', user_id);
+            localStorage.setItem('userRole', role);
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // Update auth context
+            setIsAuthenticated(true);
+            setUserRole(role);
+            setUser(user);
+
+            console.log("Auth state updated, navigating...");
+
+            // Navigate based on role
+            if (role === 'admin') {
                 navigate('/admin/dashboard');
             } else {
                 navigate('/');
             }
-        }
+        },
+        onError: (error: Error) => {
+            console.error("Login error:", error);
+        },
+    });
+
+    const handleSubmit = form.onSubmit((values) => {
+        loginMutation.mutate(values);
     });
 
     return (
@@ -71,7 +106,7 @@ export function Login() {
                     </Alert>
                 )}
 
-                <form onSubmit={form.onSubmit((values) => loginMutation.mutate(values))}>
+                <form onSubmit={handleSubmit}>
                     <Stack mt="xl">
                         <TextInput
                             label="Email"

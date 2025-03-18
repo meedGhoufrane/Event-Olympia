@@ -24,7 +24,14 @@ export class User {
 
   @Column({ default: 'user' })
   role: string;
+
+  @Column({ nullable: true })
+  resetToken?: string;
+
+  @Column({ nullable: true })
+  resetTokenExpiration?: Date;
 }
+
 
 export interface IUser extends Document {
   email: string;
@@ -32,6 +39,9 @@ export interface IUser extends Document {
   firstName?: string;
   lastName?: string;
   isActive: boolean;
+  role: string;
+  resetToken?: string;
+  resetTokenExpiration?: Date;
 }
 
 export const UserSchema = new Schema({
@@ -40,5 +50,7 @@ export const UserSchema = new Schema({
   firstName: { type: String, required: false },
   lastName: { type: String, required: false },
   isActive: { type: Boolean, default: true },
-  role: { type: String, default: 'user' }, 
+  role: { type: String, default: 'user' },
+  resetToken: { type: String, required: false },
+  resetTokenExpiration: { type: Date, required: false },
 });

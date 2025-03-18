@@ -95,9 +95,19 @@ const ManageEvents: React.FC = () => {
             }
         }
     };
-
     const handleCreateEvent = async () => {
-
+        // Check if the event date is in the past
+        const currentDate = new Date();
+        if (newEvent.date < currentDate) {
+            Swal.fire({
+                title: 'Validation Error',
+                text: 'Event date cannot be in the past. Please select a future date.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+    
         if (!newEvent.name || !newEvent.description || !newEvent.date || !newEvent.location || !newEvent.image) {
             Swal.fire({
                 title: 'Validation Error',
@@ -107,7 +117,7 @@ const ManageEvents: React.FC = () => {
             });
             return;
         }
-
+    
         const formData = new FormData();
         formData.append('name', newEvent.name);
         formData.append('description', newEvent.description);
@@ -115,13 +125,13 @@ const ManageEvents: React.FC = () => {
         formData.append('location', newEvent.location);
         formData.append('attendees', newEvent.attendees.toString());
         formData.append('status', newEvent.status);
-
+    
         formData.append('createdBy', '65dfab8d76c7f83f5cae24de');
-
+    
         if (newEvent.image) {
             formData.append('image', newEvent.image);
         }
-
+    
         try {
             const response = await api.post('/event', formData, {
                 headers: {
@@ -139,8 +149,7 @@ const ManageEvents: React.FC = () => {
                 attendees: 0,
                 status: 'planning',
             });
-
-
+    
             Swal.fire({
                 title: 'Success!',
                 text: 'Event created successfully!',
@@ -149,7 +158,7 @@ const ManageEvents: React.FC = () => {
             });
         } catch (error) {
             console.error('Error creating event:', error);
-
+    
             if (error.response && error.response.data) {
                 Swal.fire({
                     title: 'Error!',
@@ -167,7 +176,6 @@ const ManageEvents: React.FC = () => {
             }
         }
     };
-
 
     const handleOpenEditModal = (event) => {
         setCurrentEvent({

@@ -40,10 +40,15 @@ export class TicketService {
 
   async update(id: string, updateTicketDto: UpdateTicketDto): Promise<Ticket> {
     const updatedTicket = await this.ticketModel
-      .findByIdAndUpdate(id, updateTicketDto, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { $set: updateTicketDto }, // Only update fields present in updateTicketDto
+        { new: true }
+      )
       .populate('event')
       .populate('user')
       .exec();
+  
     if (!updatedTicket) {
       throw new NotFoundException(`Ticket with ID ${id} not found`);
     }

@@ -59,7 +59,6 @@ function App() {
                 <Route path="events" element={<AllEventsPage />} />
                 <Route path="login" element={<ProtectedRoute type="guest"><Login /></ProtectedRoute>} />
                 <Route path="register" element={<ProtectedRoute type="guest"><Register /></ProtectedRoute>} />
-                <Route path="profile" element={<ProtectedRoute type="auth"><Profile /></ProtectedRoute>} />
               </Route>
 
               {/* Admin Routes */}

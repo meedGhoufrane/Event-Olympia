@@ -1,12 +1,13 @@
-import { AppShell, Group, Text, Title, Stack, Button, useMantineTheme } from '@mantine/core';
+import { AppShell, Group, Text, Title, Stack, Button, useMantineTheme, Box } from '@mantine/core';
 import { IconLogout, IconDashboard, IconUsers, IconCalendarEvent, IconTicket, IconChartPie } from '@tabler/icons-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import CustomNavbar from '../components/CustomNavbar';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useMantineTheme();
 
   const handleLogout = () => {
@@ -18,24 +19,50 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     <AppShell
       padding="md"
       navbar={{
-        width: 250,
+        width: 280,
         breakpoint: 'sm',
-        collapsed: { mobile: false },
+        collapsed: { mobile: true },
       }}
       header={{
-        height: 60,
+        height: 70,
+      }}
+      styles={{
+        main: {
+          background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+        },
       }}
     >
-      <AppShell.Header p="md">
+      <AppShell.Header p="md" style={{ 
+        borderBottom: `1px solid ${theme.colors.gray[2]}`,
+        backgroundColor: theme.white,
+      }}>
         <Group justify="space-between" style={{ height: '100%' }}>
-          <Title order={3}>Admin Panel</Title>
-          <Text>Welcome, Admin!</Text>
+          <Group>
+            <Title order={3} c={theme.primaryColor}>Event Admin</Title>
+          </Group>
+          <Group>
+            <Text fw={500}>Welcome, Admin!</Text>
+            <Button 
+              variant="subtle" 
+              color="red" 
+              size="sm"
+              leftSection={<IconLogout size={16} />}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </Group>
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar p="md">
-        <AppShell.Section grow>
-          <Stack gap="sm">
+      <AppShell.Navbar p="md" style={{
+        borderRight: `1px solid ${theme.colors.gray[2]}`,
+        backgroundColor: theme.white,
+      }}>
+        <AppShell.Section grow mt="md">
+          <Stack gap="xs">
+            <Text size="xs" fw={700} c="dimmed" tt="uppercase" mb="md">Main Navigation</Text>
+            
             <CustomNavbar
               icon={IconDashboard}
               label="Dashboard"
@@ -60,24 +87,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               active={location.pathname === '/admin/tickets'}
               onClick={() => navigate('/admin/tickets')}
             />
-            <CustomNavbar
-              icon={IconChartPie}
-              label="Statistics"
-              active={location.pathname === '/admin/statistics'}
-              onClick={() => navigate('/admin/statistics')}
-            />
           </Stack>
-        </AppShell.Section>
-        <AppShell.Section>
-          <Button
-            fullWidth
-            variant="light"
-            color="red"
-            leftSection={<IconLogout size={16} />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
         </AppShell.Section>
       </AppShell.Navbar>
 

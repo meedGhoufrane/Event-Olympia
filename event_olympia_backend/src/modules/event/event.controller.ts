@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './dto/create-event.dto';
 import { Event } from './entities/event.entity';
+import { Request } from '@nestjs/common';
 
 @Controller('event')
 export class EventController {
@@ -22,10 +23,12 @@ export class EventController {
     }),
   )
   async create(
-    @Body() createEventDto: CreateEventDto,
     @UploadedFile() file: Express.Multer.File,
+    @Body() createEventDto: CreateEventDto,
+    @Req() request: Request
   ): Promise<Event> {
-    // If there's a file, add the file path to the DTO
+    console.log('Request Headers:', request.headers);
+    console.log('Creating event with data:', createEventDto);
     if (file) {
       createEventDto.image = `uploads/${file.filename}`;
     }
@@ -33,8 +36,8 @@ export class EventController {
   }
 
   @Get()
-  findAll(@Query('limit') limit: string): Promise<Event[]> {
-    return this.eventService.findAll(Number(limit));
+  findAll(@Query('limit') limit: string = '10') {
+    return this.eventService.findAll(parseInt(limit));
   }
 
   @Get(':id')
@@ -59,6 +62,7 @@ export class EventController {
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
     @UploadedFile() file: Express.Multer.File,
+    @Req() request: Request
   ): Promise<Event> {
     if (file) {
       updateEventDto.image = `uploads/${file.filename}`;

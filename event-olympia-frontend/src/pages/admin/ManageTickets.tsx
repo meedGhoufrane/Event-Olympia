@@ -9,7 +9,8 @@ import {
     Container,
     Modal,
     TextInput,
-    Paper
+    Paper,
+    Select
 } from '@mantine/core';
 import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import api from '../../services/api';
@@ -32,6 +33,8 @@ const ManageTickets: React.FC = () => {
         price: 0,
         status: 'available',
     });
+    const [events, setEvents] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         async function fetchTickets() {
@@ -48,7 +51,28 @@ const ManageTickets: React.FC = () => {
                 });
             }
         }
+
+        async function fetchEvents() {
+            try {
+                const response = await api.get('/event');
+                setEvents(response.data);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        }
+
+        async function fetchUsers() {
+            try {
+                const response = await api.get('/users');
+                setUsers(response.data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
         fetchTickets();
+        fetchEvents();
+        fetchUsers();
     }, []);
 
     const handleDelete = async (id: string) => {
@@ -73,7 +97,6 @@ const ManageTickets: React.FC = () => {
             }
         }
     };
-
 
     const handleOpenEditModal = (ticket) => {
         setCurrentTicket(ticket);
@@ -144,8 +167,22 @@ const ManageTickets: React.FC = () => {
 
             {/* Modal for editing tickets */}
             <Modal opened={editModalOpened} onClose={() => setEditModalOpened(false)} title="Edit Ticket">
-                <TextInput label="Event ID" value={currentTicket.eventId} onChange={(e) => setCurrentTicket({ ...currentTicket, eventId: e.currentTarget.value })} mb="md" />
-                <TextInput label="User ID" value={currentTicket.userId} onChange={(e) => setCurrentTicket({ ...currentTicket, userId: e.currentTarget.value })} mb="md" />
+                <Select
+                    label="Event"
+                    placeholder="Select an event"
+                    data={events.map(event => ({ value: event._id, label: event.name }))}
+                    value={currentTicket.eventId}
+                    onChange={(value) => setCurrentTicket({ ...currentTicket, eventId: value })}
+                    mb="md"
+                />
+                <Select
+                    label="User"
+                    placeholder="Select a user"
+                    data={users.map(user => ({ value: user._id, label: user.firstName }))}
+                    value={currentTicket.userId}
+                    onChange={(value) => setCurrentTicket({ ...currentTicket, userId: value })}
+                    mb="md"
+                />
                 <TextInput label="Price" type="number" value={currentTicket.price} onChange={(e) => setCurrentTicket({ ...currentTicket, price: Number(e.currentTarget.value) })} mb="md" />
                 <Button fullWidth onClick={handleUpdateTicket}>Update Ticket</Button>
             </Modal>

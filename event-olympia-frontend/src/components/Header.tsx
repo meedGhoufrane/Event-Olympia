@@ -111,7 +111,6 @@ export function Header() {
                 <Avatar radius="xl" size="md" style={{ cursor: 'pointer' }} />
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item component={Link} to="/profile">Profile</Menu.Item>
                 <Menu.Item onClick={logout}>Logout</Menu.Item>
               </Menu.Dropdown>
             </Menu>

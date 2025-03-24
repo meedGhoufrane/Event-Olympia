@@ -75,7 +75,6 @@ cd event-olympia
 cd event_olympia_backend
 npm install
 cp .env.example .env
-# Update .env with your configuration
 npm run start:dev
 ```
 
@@ -84,7 +83,6 @@ npm run start:dev
 cd ../event-olympia-frontend
 npm install
 cp .env.example .env
-# Update .env with your configuration
 npm run dev
 ```
 

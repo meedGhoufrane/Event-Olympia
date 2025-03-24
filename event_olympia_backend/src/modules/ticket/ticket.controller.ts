@@ -6,6 +6,24 @@ import { CreateTicketDto, UpdateTicketDto } from './dto/create-ticket.dto';
 export class TicketController {
   constructor(private readonly ticketService: TicketService) { }
 
+  // Move statistics endpoint before specific routes with parameters
+  @Get('statistics')
+   async getStatistics() {
+       const totalTickets = await this.ticketService.countTickets();
+       const totalRevenue = await this.ticketService.calculateTotalRevenue();
+       return { totalTickets, totalRevenue };
+   }
+
+  @Get('event/:eventId')
+  findByEvent(@Param('eventId') eventId: string) {
+    return this.ticketService.findByEvent(eventId);
+  }
+
+  @Get('user/:userId')
+  findByUser(@Param('userId') userId: string) {
+    return this.ticketService.findByUser(userId);
+  }
+
   @Post()
   create(@Body() createTicketDto: CreateTicketDto, @Req() request: any) {
     console.log('Request Headers:', request.headers);
@@ -32,15 +50,5 @@ export class TicketController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.ticketService.remove(id);
-  }
-
-  @Get('event/:eventId')
-  findByEvent(@Param('eventId') eventId: string) {
-    return this.ticketService.findByEvent(eventId);
-  }
-
-  @Get('user/:userId')
-  findByUser(@Param('userId') userId: string) {
-    return this.ticketService.findByUser(userId);
   }
 }

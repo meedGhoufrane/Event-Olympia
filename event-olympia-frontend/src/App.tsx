@@ -11,13 +11,14 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AllEventsPage } from './pages/AllEventsPage';
 import { Dashboard } from './pages/dashbaord/Dashboard';
-import { Profile } from './pages/Profile';
-import  ManageUsers  from './pages/admin/ManageUsers';
+import { SingleEventPage } from './pages/SingleEventPage';
+import { ForgotPassword } from './pages/ForgotPassword';
+import ManageUsers from './pages/admin/ManageUsers';
 import ManageEvents from './pages/admin/ManageEvents';
 import ManageTickets from './pages/admin/ManageTickets';
 // import { Statistics } from './pages/admin/Statistics';
 import { useState } from 'react';
-
+// Import the ProfileTicketsPage component
 const queryClient = new QueryClient();
 
 const theme = createTheme({
@@ -59,20 +60,23 @@ function App() {
                 <Route path="events" element={<AllEventsPage />} />
                 <Route path="login" element={<ProtectedRoute type="guest"><Login /></ProtectedRoute>} />
                 <Route path="register" element={<ProtectedRoute type="guest"><Register /></ProtectedRoute>} />
+                <Route path="forgot-password" element={<ProtectedRoute type="guest"><ForgotPassword /></ProtectedRoute>} />
+                <Route path="events/:eventId" element={<SingleEventPage />} />
+
+                {/* Add just the tickets route */}
               </Route>
 
               {/* Admin Routes */}
               <Route
                 path="/admin/*"
                 element={
-                  <ProtectedRoute type="auth">
+                  <ProtectedRoute type="admin">
                     <AdminLayout>
                       <Routes>
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="users" element={<ManageUsers />} />
                         <Route path="events" element={<ManageEvents />} />
                         <Route path="tickets" element={<ManageTickets />} />
-                        {/* <Route path="statistics" element={<Statistics />} /> */} 
                       </Routes>
                     </AdminLayout>
                   </ProtectedRoute>

@@ -52,7 +52,7 @@ export class AuthService {
 
     const resetToken = uuidv4();
     user.resetToken = resetToken;
-    user.resetTokenExpiration = new Date(Date.now() + 3600000); 
+    user.resetTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
     await user.save();
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -61,27 +61,51 @@ export class AuthService {
     }
 
     try {
+      console.log('Creating email transporter...');
       const transporter = nodemailer.createTransport({
-        service: 'Gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
         },
+        debug: true, // Enable debug logging
       });
+
+      // Verify transporter configuration
+      await transporter.verify();
+      console.log('Transporter verified successfully');
+
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
       const mailOptions = {
         to: email,
         from: process.env.EMAIL_USER,
-        subject: 'Password Reset',
-        text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n` +
-              `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
-              `http://localhost:3000/auth/reset-password/${resetToken}\n\n` +
-              `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+        subject: 'Password Reset Request',
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>You are receiving this email because you (or someone else) have requested the reset of the password for your account.</p>
+          <p>Please click on the following link to reset your password:</p>
+          <a href="${resetUrl}">Reset Password</a>
+          <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+          <p>This link will expire in 1 hour.</p>
+        `,
       };
 
-      await transporter.sendMail(mailOptions);
+      console.log('Sending email to:', email);
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully:', info.messageId);
     } catch (error) {
-      console.error('Email sending failed:', error);
+      console.error('Detailed email sending error:', {
+        message: error.message,
+        code: error.code,
+        command: error.command,
+        response: error.response,
+        responseCode: error.responseCode,
+        stack: error.stack
+      });
       throw new InternalServerErrorException('Failed to send password reset email. Please contact support.');
     }
   }

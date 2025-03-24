@@ -21,7 +21,8 @@ import { TicketModule } from './modules/ticket/ticket.module';
     AuthModule,
     UsersModule,
     EventModule,
-    TicketModule
+    TicketModule,
+    
   ],
 })
 export class AppModule {}

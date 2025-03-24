@@ -5,6 +5,8 @@ import { Footer } from '../components/Footer';
 
 export function MainLayout({ toggleTheme, theme }) {
   const location = useLocation();
+
+  // Check if the current route is login or register
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
@@ -29,7 +31,8 @@ export function MainLayout({ toggleTheme, theme }) {
       )}
       <AppShell.Main>
         <Outlet />
-        <Footer />
+        {/* Conditionally render the Footer */}
+        {!isAuthPage && <Footer />}
       </AppShell.Main>
     </AppShell>
   );

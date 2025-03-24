@@ -296,7 +296,7 @@ const ManageEvents: React.FC = () => {
                                     <td>
                                         {/* Display the event image or a default image if not available */}
                                         <Image
-                                            src={event.image ? `/uploads/${event.image}` : 'path/to/default-image.jpg'} // Ensure the correct path
+                                            src={event.image} // Ensure the correct path
                                             alt={event.name}
                                             width={50}
                                             height={50}

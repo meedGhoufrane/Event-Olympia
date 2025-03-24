@@ -1,38 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, Query, UseInterceptors, UploadedFile, Req, UploadedFiles } from '@nestjs/common';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './dto/create-event.dto';
 import { Event } from './entities/event.entity';
 import { Request } from '@nestjs/common';
+import { multerConfig } from 'src/core/config/multer.config';
+import { S3Service } from 'src/core/services/S3.service';
 
 @Controller('event')
 export class EventController {
-  constructor(private readonly eventService: EventService) { }
+  constructor(
+    private readonly eventService: EventService,
+    private readonly s3Service: S3Service,
+  ) { }
 
   @Post()
   @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}-${file.originalname}`);
-        },
-      }),
-    }),
+    FileFieldsInterceptor(
+      [
+        { name: 'image', maxCount: 1 },
+      ],
+      multerConfig,
+    ),
   )
   async create(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: { image?: Express.Multer.File[] },
     @Body() createEventDto: CreateEventDto,
     @Req() request: Request
-  ): Promise<Event> {
-    console.log('Request Headers:', request.headers);
-    console.log('Creating event with data:', createEventDto);
-    if (file) {
-      createEventDto.image = `uploads/${file.filename}`;
+  ) {
+    const imageFile = files.image?.[0];
+    if (imageFile) {
+      const imageKey = `pharmacy/image/${Date.now()}-${imageFile.originalname}`;
+      createEventDto.image = await this.s3Service.uploadFile(
+        imageFile,
+        imageKey
+      )
     }
-    return this.eventService.create(createEventDto);
+    console.log(createEventDto);
+    await this.eventService.create(createEventDto);
   }
 
   @Get()

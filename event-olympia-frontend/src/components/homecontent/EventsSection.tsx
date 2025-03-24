@@ -26,6 +26,101 @@ const TagIcon = ({ size = 18, color = "#61dafb" }) => (
   </svg>
 );
 
+// Styles for EventCard
+const styles = {
+  eventCard: {
+    borderRadius: '16px',
+    overflow: 'hidden',
+    transition: 'transform 0.4s ease, box-shadow 0.4s ease',
+    height: '100%',
+    backgroundColor: '#ffffff',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+    '&:hover': {
+      transform: 'translateY(-10px)',
+      boxShadow: '0 16px 32px rgba(0, 0, 0, 0.15)',
+    }
+  },
+  imageContainer: {
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  eventImage: {
+    transition: 'transform 0.7s ease',
+    height: '220px',
+    objectFit: 'cover',
+    width: '100%',
+    '&:hover': {
+      transform: 'scale(1.1)',
+    }
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%)',
+    zIndex: 1
+  },
+  dateBadge: {
+    position: 'absolute',
+    top: '16px',
+    right: '16px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    padding: '8px',
+    minWidth: '65px',
+    textAlign: 'center',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+    zIndex: 2
+  },
+  categoryBadge: {
+    position: 'absolute',
+    top: '16px',
+    left: '16px',
+    zIndex: 2,
+    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.2)',
+    padding: '8px 12px'
+  },
+  contentContainer: {
+    padding: '25px',
+    display: 'flex',
+    flexDirection: 'column',
+    height: 'calc(100% - 220px)'
+  },
+  title: {
+    fontSize: '22px',
+    lineHeight: 1.3,
+    marginBottom: '16px',
+    fontWeight: 700,
+    color: '#1a1b1e'
+  },
+  metaItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    marginBottom: '12px'
+  },
+  metaText: {
+    fontSize: '14px',
+    color: '#495057'
+  },
+  viewButton: {
+    marginTop: 'auto',
+    borderRadius: '50px',
+    fontWeight: 600,
+    padding: '12px 20px',
+    transition: 'all 0.3s ease',
+    width: '100%',
+    boxShadow: '0 4px 14px rgba(0, 120, 220, 0.3)',
+    background: 'linear-gradient(135deg, #2979ff 0%, #38b6ff 100%)',
+    '&:hover': {
+      transform: 'translateY(-3px)',
+      boxShadow: '0 8px 20px rgba(0, 120, 220, 0.4)',
+    }
+  }
+};
+
 export function EventsSection() {
   const [events, setEvents] = useState([]);
 
@@ -81,7 +176,7 @@ export function EventsSection() {
               date={event.date}
               location={event.location}
               image={event.image}
-              category={event.category || "Event"} // Add category if available
+              category={event.category || "Event"}
             />
           ))}
         </SimpleGrid>
@@ -137,64 +232,36 @@ function EventCard({ title, date, location, image, category = "Event" }) {
   return (
     <Paper
       radius="lg"
-      style={{
-        overflow: 'hidden',
-        position: 'relative',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        height: '100%',
-        cursor: 'pointer',
-        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
-        '&:hover': {
-          transform: 'translateY(-10px)',
-          boxShadow: '0 12px 28px rgba(0, 0, 0, 0.25)',
-        },
-      }}
       className="event-card"
       h={rem(420)}
       withBorder={false}
+      style={{
+        ...styles.eventCard,
+        height: '100%',
+        cursor: 'pointer',
+      }}
     >
       <Box style={{ position: 'relative', height: '100%' }}>
         {/* Image container with overlay gradient */}
-        <Box style={{ position: 'relative' }}>
+        <Box style={styles.imageContainer}>
           <Image
             src={image}
             height={rem(220)}
             alt={title}
             fit="cover"
-            style={{
-              transition: 'transform 0.6s ease',
-              '&:hover': {
-                transform: 'scale(1.1)',
-              },
-            }}
             className="event-image"
+            style={styles.eventImage}
           />
           
           {/* Overlay gradient for better text contrast */}
-          <Box 
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%)',
-              zIndex: 1
-            }}
-          />
+          <Box className="image-overlay" style={styles.imageOverlay} />
           
           {/* Category Badge */}
           <Badge 
             variant="gradient"
             gradient={gradient}
-            style={{
-              position: 'absolute',
-              top: '12px',
-              left: '12px',
-              zIndex: 2,
-              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-              padding: '0.5rem 0.75rem',
-            }}
+            className="event-category-badge"
+            style={styles.categoryBadge}
             size="lg"
           >
             <Group spacing={4}>
@@ -205,44 +272,30 @@ function EventCard({ title, date, location, image, category = "Event" }) {
           
           {/* Date Badge */}
           <Box
-            style={{
-              position: 'absolute',
-              top: '12px',
-              right: '12px',
-              zIndex: 2,
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '0.5rem',
-              minWidth: '60px',
-              textAlign: 'center',
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
-            }}
+            className="event-date-badge"
+            style={styles.dateBadge}
           >
-            <Text style={{ fontWeight: 800, fontSize: '1.25rem', lineHeight: 1, color: '#1c7ed6' }}>
+            <Text className="event-date-day" style={{ fontWeight: 800, fontSize: '1.25rem', lineHeight: 1, color: '#1c7ed6' }}>
               {day}
             </Text>
-            <Text style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#495057', fontWeight: 600 }}>
+            <Text className="event-date-month" style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#495057', fontWeight: 600 }}>
               {month}
             </Text>
           </Box>
         </Box>
         
         {/* Content */}
-        <Box p={rem(25)} style={{ backgroundColor: 'white', height: 'calc(100% - 220px)', display: 'flex', flexDirection: 'column' }}>
-          <Title order={3} mb={rem(15)} lineClamp={2} style={{ fontSize: rem(20), lineHeight: 1.3 }}>{title}</Title>
+        <Box className="event-content" style={styles.contentContainer}>
+          <Title order={3} className="event-title" lineClamp={2} style={styles.title}>{title}</Title>
           
-          <Group gap={rem(15)} mb={rem(15)}>
-            <Group gap={rem(8)}>
-              <ClockIcon size={18} color="#4dabf7" />
-              <Text size="sm" c="gray.7">{formattedDate}</Text>
-            </Group>
+          <Group className="event-meta" style={styles.metaItem}>
+            <ClockIcon size={18} color="#4dabf7" />
+            <Text className="event-meta-text" style={styles.metaText}>{formattedDate}</Text>
           </Group>
           
-          <Group gap={rem(15)} mb={rem(15)}>
-            <Group gap={rem(8)}>
-              <MapPinIcon size={18} color="#4dabf7" />
-              <Text size="sm" c="gray.7">{location}</Text>
-            </Group>
+          <Group className="event-meta" style={styles.metaItem}>
+            <MapPinIcon size={18} color="#4dabf7" />
+            <Text className="event-meta-text" style={styles.metaText}>{location}</Text>
           </Group>
           
           {/* Spacer to push button to bottom */}
@@ -254,20 +307,8 @@ function EventCard({ title, date, location, image, category = "Event" }) {
             radius="xl"
             size="md"
             fullWidth
-            style={{
-              boxShadow: '0 4px 14px rgba(0, 120, 220, 0.3)',
-              transition: 'all 0.3s ease',
-              marginTop: 'auto',
-            }}
             className="view-details-button"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 120, 220, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 14px rgba(0, 120, 220, 0.3)';
-            }}
+            style={styles.viewButton}
           >
             View Details
           </Button>

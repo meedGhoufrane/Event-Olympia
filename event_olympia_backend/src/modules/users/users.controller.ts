@@ -13,6 +13,12 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get('statistics')
+  async getStatistics() {
+    const totalUsers = await this.usersService.countUsers();
+    return { totalUsers };
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@Request() req) {

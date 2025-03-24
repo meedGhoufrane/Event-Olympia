@@ -12,10 +12,9 @@ export function AllEventsPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(null); // Status filter (null means no filter)
-  const [searchQuery, setSearchQuery] = useState(''); // Search by event name
+  const [statusFilter, setStatusFilter] = useState(null); 
+  const [searchQuery, setSearchQuery] = useState(''); 
 
-  // Fetch events from the backend
   useEffect(() => {
     async function fetchEvents() {
       try {
@@ -33,7 +32,6 @@ export function AllEventsPage() {
     fetchEvents();
   }, []);
 
-  // Filter events based on status and search query
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = !statusFilter || statusFilter === 'all' || event.status === statusFilter;
@@ -41,7 +39,6 @@ export function AllEventsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // Toggle status filter
   const handleStatusFilter = (value) => {
     setStatusFilter(value === 'all' ? null : value); // Reset filter if 'all' is selected
   };
@@ -199,21 +196,18 @@ export function AllEventsPage() {
         </Group>
       </Card>
 
-      {/* Loading state */}
       {loading && (
         <Center my={50}>
           <Loader size="xl" color="blue" variant="dots" />
         </Center>
       )}
 
-      {/* Error state */}
       {error && (
         <Center my={50}>
           <Text color="red" size="lg">{error}</Text>
         </Center>
       )}
 
-      {/* Empty state */}
       {!loading && !error && filteredEvents.length === 0 && (
         <Center my={50} sx={{ flexDirection: 'column' }}>
           <Text color="dimmed" size="lg" mb={10}>No events found for this status.</Text>
@@ -221,7 +215,7 @@ export function AllEventsPage() {
             <Button
               variant="subtle"
               color="blue"
-              onClick={() => setStatusFilter(null)} // Reset filter
+              onClick={() => setStatusFilter(null)} 
             >
               View all events
             </Button>
@@ -229,7 +223,6 @@ export function AllEventsPage() {
         </Center>
       )}
 
-      {/* Events grid */}
       {!loading && !error && filteredEvents.length > 0 && (
         <SimpleGrid
           cols={{ base: 1, sm: 2, md: 3 }}
@@ -243,10 +236,10 @@ export function AllEventsPage() {
               title={event.name}
               date={event.date}
               location={event.location}
-              image={`/uploads/${event.image}`}
+              image={event.image}
               price={event.price || 20}
               category={event.category || 'Event'}
-              status={event.status || 'planning'} // Add status prop
+              status={event.status || 'planning'} 
               onBuyTicket={handleBuyTicket}
             />
           ))}

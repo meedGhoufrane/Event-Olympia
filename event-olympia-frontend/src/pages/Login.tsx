@@ -33,17 +33,14 @@ export function Login() {
         onSuccess: (data) => {
             console.log("Login response:", data);
 
-            // Validate response data
             if (!data.access_token) {
                 throw new Error('No access token provided');
             }
 
-            // Extract user data from the response
             const { access_token, role, user_id } = data;
 
-            // Create a user object
             const user = {
-                _id: user_id, // Use the user_id from the backend
+                _id: user_id, 
                 email: form.values.email,
                 name: form.values.email.split('@')[0] || 'User',
                 role: role || 'user',
@@ -51,20 +48,17 @@ export function Login() {
 
             console.log("Processed user data:", user);
 
-            // Store token and user data in localStorage
             localStorage.setItem('token', access_token);
             localStorage.setItem('user_id', user_id);
             localStorage.setItem('userRole', role);
             localStorage.setItem('user', JSON.stringify(user));
 
-            // Update auth context
             setIsAuthenticated(true);
             setUserRole(role);
             setUser(user);
 
             console.log("Auth state updated, navigating...");
 
-            // Navigate based on role
             if (role === 'admin') {
                 navigate('/admin/dashboard');
             } else {
@@ -124,6 +118,9 @@ export function Login() {
                             disabled={loginMutation.isPending}
                             {...form.getInputProps('password')}
                         />
+                        <Anchor component={Link} to="/forgot-password" size="sm" ta="right">
+                            Forgot password?
+                        </Anchor>
                         <Button
                             type="submit"
                             radius="md"

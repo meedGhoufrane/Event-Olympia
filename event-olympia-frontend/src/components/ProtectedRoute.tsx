@@ -7,23 +7,26 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, type }: ProtectedRouteProps) {
+  const { isAuthenticated, userRole } = useAuth();
 
-  // const userRole = localStorage.getItem('userRole');
+  if (type === 'guest' && isAuthenticated) {
+    // If the user is authenticated and tries to access a guest-only route (like login/register),
+    // redirect them to the home page or dashboard based on their role.
+    return <Navigate to={userRole === 'admin' ? '/admin/dashboard' : '/'} replace />;
+  }
 
-  // const { isAuthenticated } = useAuth();
-  // console.log("role - isauth", userRole, isAuthenticated);
+  if (type === 'auth' && !isAuthenticated) {
+    // If the user is not authenticated and tries to access a protected route,
+    // redirect them to the login page.
+    return <Navigate to="/login" replace />;
+  }
 
-  // // if (type === 'guest' && isAuthenticated) {
-  // //   return <Navigate to="/" replace />;
-  // // }
+  if (type === 'admin' && userRole !== 'admin') {
+    // If the user is not an admin and tries to access an admin-only route,
+    // redirect them to the home page.
+    return <Navigate to="/" replace />;
+  }
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" replace />;
-  // }
-
-  // if (type === 'admin' && isAuthenticated && userRole === 'admin') {
-  //   return <Navigate to="/admin/dashboard" replace />;
-  // }
-
+  // If all checks pass, render the children (the protected component).
   return <>{children}</>;
 }

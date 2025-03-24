@@ -23,10 +23,11 @@ export class TicketService {
 
   async findAll(): Promise<Ticket[]> {
     return this.ticketModel.find()
-      .populate('event') // Ensure this is included
+      .populate('event')
       .populate('user')
       .exec();
   }
+
   async findOne(id: string): Promise<Ticket> {
     const ticket = await this.ticketModel.findById(id)
       .populate('event')
@@ -42,7 +43,7 @@ export class TicketService {
     const updatedTicket = await this.ticketModel
       .findByIdAndUpdate(
         id,
-        { $set: updateTicketDto }, // Only update fields present in updateTicketDto
+        { $set: updateTicketDto },
         { new: true }
       )
       .populate('event')
@@ -74,5 +75,22 @@ export class TicketService {
       .populate('event')
       .populate('user')
       .exec();
+  }
+
+  async countTickets(): Promise<number> {
+    return this.ticketModel.countDocuments().exec();
+  }
+
+  async calculateTotalRevenue(): Promise<number> {
+    const result = await this.ticketModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$price" }
+        }
+      }
+    ]).exec();
+    
+    return result.length > 0 ? result[0].totalRevenue : 0;
   }
 }

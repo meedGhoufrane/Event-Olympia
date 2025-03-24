@@ -94,7 +94,7 @@ export function HeroSection() {
           <Group justify="center" mt={rem(20)}>
             <Button
               component={Link}
-              to="/Tickets"
+              to="/events"
               size="xl"
               radius="xl"
               variant="gradient"

@@ -1,7 +1,7 @@
-// src/modules/users/dto/update-user.dto.ts
 export class UpdateUserDto {
-    firstName?: string;
-    lastName?: string;
-    password?: string;
-    isActive?: boolean;
-  }
+  email?: string; // Make sure this is optional
+  password?: string; // Optional
+  firstName?: string; // Optional
+  lastName?: string; // Optional
+  role?: string; // Optional
+}
